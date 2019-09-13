@@ -29,7 +29,6 @@ class MyStatefulWidget extends StatefulWidget {
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget>
     with SingleTickerProviderStateMixin {
-
   bool isOpened = false;
   AnimationController _animationController;
   Animation<Color> _animateColor;
@@ -41,10 +40,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
     super.initState();
     player.initPlaying();
     _animationController =
-    AnimationController(vsync: this, duration: Duration(milliseconds: 500))
-      ..addListener(() {
-        setState(() {});
-      });
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500))
+          ..addListener(() {
+            setState(() {});
+          });
     _animateIcon =
         Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
     _animateColor = ColorTween(
@@ -66,7 +65,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
     super.dispose();
   }
 
-
   Player player = Player();
   PlaybackState state;
 
@@ -75,7 +73,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   PageController _myPage = PageController(initialPage: 0);
 
   void buttonChange() {
-    setState(() {
       if (state?.basicState == BasicPlaybackState.playing) {
         _animationController.forward();
         AudioService.pause();
@@ -83,7 +80,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
         _animationController.reverse();
         AudioService.play();
       }
-    });
   }
 
   Widget build(BuildContext context) {
@@ -133,11 +129,13 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
                 Padding(
                   padding: EdgeInsets.only(right: 120),
                   child: IconButton(
-                    icon: Icon(
-                        Icons.mail_outline, color: Colors.white, size: 35),
+                    icon:
+                        Icon(Icons.mail_outline, color: Colors.white, size: 35),
                     onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => PedidoMusica()));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PedidoMusica()));
                     },
                   ),
                 ),
@@ -172,35 +170,35 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
           builder: (context, snapshot) {
             state = snapshot.data;
             return Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle
-              ),
-              height: 120,
-              width: 120,
-              child: FittedBox(
-                child: FloatingActionButton(
-                    backgroundColor: mainColor,
-                    onPressed: () {},
-                    child: buildPlayer(state)),
-              ),
-            );
+                decoration: BoxDecoration(shape: BoxShape.circle),
+                height: 120,
+                width: 120,
+                child: FittedBox(
+                  child: FloatingActionButton(
+                      backgroundColor: mainColor,
+                      onPressed: buttonChange,
+                      child: AnimatedIcon(
+                        icon: AnimatedIcons.pause_play,
+                        progress: _animateIcon,
+                      )),
+                ));
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
-  Widget buildPlayer(PlaybackState state) {
-    if (state?.basicState == BasicPlaybackState.playing) {
-      _animationController.forward();
-//        IconButton(
-//          icon: Icon(
-//            Icons.pause_circle_outline,
-//            color: Color(0xFFF8665E),
-//          ),
-//          iconSize: 40,
-//          onPressed: buttonChange);
-    } else {
-      _animationController.reverse();
-    }
-  }
+//  Widget buildPlayer(PlaybackState state) {
+//    if (state?.basicState == BasicPlaybackState.playing) {
+//      _animationController.forward();
+////        IconButton(
+////          icon: Icon(
+////            Icons.pause_circle_outline,
+////            color: Color(0xFFF8665E),
+////          ),
+////          iconSize: 40,
+////          onPressed: buttonChange);
+//    } else {
+//      _animationController.reverse();
+//    }
+//  }
 }
