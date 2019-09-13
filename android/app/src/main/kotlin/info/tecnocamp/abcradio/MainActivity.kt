@@ -1,4 +1,4 @@
-package br.com.tecnocampinfo.radiobasic
+package info.tecnocamp.abcradio
 
 import android.os.Bundle
 

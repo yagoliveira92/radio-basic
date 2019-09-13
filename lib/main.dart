@@ -1,137 +1,176 @@
+import 'package:abcradio/pages/contato.dart';
+import 'package:abcradio/pages/home_page.dart';
+import 'package:abcradio/pages/pedido_musica.dart';
 import 'package:flutter/material.dart';
-import 'package:radio_basic/jam_icon_app_icons.dart';
-import 'package:radio_basic/home.dart';
-import 'package:radio_basic/social.dart';
-import 'package:radio_basic/contact.dart';
-import 'package:audioplayer/audioplayer.dart';
+import 'package:abcradio/controllers/player.dart';
 import 'package:audio_service/audio_service.dart';
-import 'dart:async';
+import 'package:share/share.dart';
 
-void main() {
-  runApp(MaterialApp(
-    home: Main(),
-  ));
-}
+void main() => runApp(MyApp());
 
-class Main extends StatefulWidget {
-  @override
-  _MainState createState() => _MainState();
-}
-
-class _MainState extends State<Main> {
-  @override
-  void initState() {
-    super.initState();
-    AudioService.connect();
-    AudioService.start(
-      backgroundTask: _backgroundAudioPlayerTask,
-      resumeOnClick: true,
-      androidNotificationChannelName: 'ABC Rádio',
-      notificationColor: 0x5E6263,
-      androidNotificationIcon: 'mipmap/radio',
-    );
-  }
-
-  int _currentIndex = 0;
-  final List<Widget> _children = [
-    Home(),
-    Social(),
-    Contact(),
-  ];
+class MyApp extends StatelessWidget {
+  static const String _title = 'Flutter Code Sample';
 
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      title: _title,
+      home: MyStatefulWidget(),
+    );
+  }
+}
+
+class MyStatefulWidget extends StatefulWidget {
+  MyStatefulWidget({Key key}) : super(key: key);
+
+  @override
+  _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
+}
+
+class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+  @override
+  void initState() {
+    super.initState();
+    player.initPlaying();
+  }
+
+  Player player = Player();
+  PlaybackState state;
+
+  bool buttonState = true;
+  Color mainColor = Color(0xFF1B203C);
+  PageController _myPage = PageController(initialPage: 0);
+
+  void buttonChange() {
+    setState(() {
+      if (state?.basicState == BasicPlaybackState.playing) {
+        AudioService.pause();
+      } else {
+        AudioService.play();
+      }
+    });
+  }
+
+  Widget build(BuildContext context) {
     return Scaffold(
-      body:
-      _children[_currentIndex], // new
-      bottomNavigationBar: BottomNavigationBar(
-        fixedColor: Colors.grey,
-        onTap: onTabTapped,
-        currentIndex: _currentIndex, // new// new
-        items: [
-          BottomNavigationBarItem(
-            icon: new Icon(JamIconApp.home),
-            title: new Text('Home'),
+      extendBody: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(40),
+        child: AppBar(
+          title: Text('ABC Rádio'),
+          centerTitle: true,
+          backgroundColor: mainColor,
+        ),
+      ),
+      body: Stack(
+        children: <Widget>[
+          PageView(
+            controller: _myPage,
+            children: <Widget>[
+              Home(),
+              Contato(),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.alternate_email),
-            title: new Text('Social'),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(JamIconApp.contact), title: Text('Contato'))
         ],
       ),
+      bottomNavigationBar: BottomAppBar(
+          color: mainColor,
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 5,
+          child: Container(
+            height: 90,
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.home,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _myPage.jumpToPage(0);
+                    });
+                  },
+                ),
+                Padding(
+                  padding: EdgeInsets.only(right: 120),
+                  child: IconButton(
+                    icon: Icon(
+                        Icons.mail_outline, color: Colors.white, size: 35),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => PedidoMusica()));
+                    },
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.share,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                  onPressed: () {
+                    Share.share(
+                        "Acompanhe a melhor rádio do Flashback em: https://play.google.com/store/apps/details?id=br.abcradio.web");
+                  },
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.record_voice_over,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _myPage.jumpToPage(1);
+                    });
+                  },
+                )
+              ],
+            ),
+          )),
+      floatingActionButton: StreamBuilder(
+          stream: AudioService.playbackStateStream,
+          builder: (context, snapshot) {
+            state = snapshot.data;
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle
+              ),
+              height: 120,
+              width: 120,
+              child: FittedBox(
+                child: FloatingActionButton(
+                    backgroundColor: mainColor,
+                    onPressed: () {},
+                    child: buildPlayer(state)),
+              ),
+            );
+          }),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-  }
-}
-
-void _backgroundAudioPlayerTask() async {
-  CustomAudioPlayer player = CustomAudioPlayer();
-  AudioServiceBackground.run(
-    onStart: player.run,
-    onPlay: player.play,
-    onPause: player.pause,
-    onStop: player.stop,
-    onClick: (MediaButton button) => player.playPause(),
-  );
-}
-
-class CustomAudioPlayer {
-  static const streamUri =
-      'https://azuracast.tecnocampinfo.com.br/radio/8000/listen.mp3';
-  AudioPlayer _audioPlayer = new AudioPlayer();
-  Completer _completer = Completer();
-  bool _playing = true;
-
-  Future<void> run() async {
-    MediaItem mediaItem = MediaItem(
-        id: 'audio_1', album: 'ABC Radio', title: 'A rádio que não cansa vc');
-
-    AudioServiceBackground.setMediaItem(mediaItem);
-
-    var playerStateSubscription = _audioPlayer.onPlayerStateChanged
-        .where((state) => state == AudioPlayerState.COMPLETED)
-        .listen((state) {
-      stop();
-    });
-    play();
-    await _completer.future;
-    playerStateSubscription.cancel();
-  }
-
-  void playPause() {
-    if (_playing)
-      pause();
-    else
-      play();
-  }
-
-  void play() {
-    _audioPlayer.play(streamUri);
-    AudioServiceBackground.setState(
-        controls: [pauseControl, stopControl],
-        basicState: BasicPlaybackState.playing);
-    buttonState = !buttonState;
-  }
-
-  void pause() {
-    _audioPlayer.pause();
-    AudioServiceBackground.setState(
-        controls: [playControl, stopControl],
-        basicState: BasicPlaybackState.paused);
-  }
-
-  void stop() {
-    _audioPlayer.stop();
-    AudioServiceBackground.setState(
-        controls: [], basicState: BasicPlaybackState.stopped);
-    _completer.complete();
-    buttonState = !buttonState;
+  Widget buildPlayer(PlaybackState state) {
+    if (state?.basicState == BasicPlaybackState.playing) {
+      return IconButton(
+          icon: Icon(
+            Icons.pause_circle_outline,
+            color: Color(0xFFF8665E),
+          ),
+          iconSize: 40,
+          onPressed: buttonChange);
+    } else {
+      return IconButton(
+          icon: Icon(
+            Icons.play_circle_outline,
+            color: Color(0xFFF8665E),
+          ),
+          iconSize: 40,
+          onPressed: buttonChange);
+    }
   }
 }
