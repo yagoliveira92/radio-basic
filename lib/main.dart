@@ -27,12 +27,45 @@ class MyStatefulWidget extends StatefulWidget {
   _MyStatefulWidgetState createState() => _MyStatefulWidgetState();
 }
 
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+class _MyStatefulWidgetState extends State<MyStatefulWidget>
+    with SingleTickerProviderStateMixin {
+
+  bool isOpened = false;
+  AnimationController _animationController;
+  Animation<Color> _animateColor;
+  Animation<double> _animateIcon;
+  Curve _curve = Curves.easeOut;
+
   @override
   void initState() {
     super.initState();
     player.initPlaying();
+    _animationController =
+    AnimationController(vsync: this, duration: Duration(milliseconds: 500))
+      ..addListener(() {
+        setState(() {});
+      });
+    _animateIcon =
+        Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    _animateColor = ColorTween(
+      begin: Color(0xFF1B203C),
+      end: Color(0xFF1B203C),
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Interval(
+        0.00,
+        1.00,
+        curve: _curve,
+      ),
+    ));
   }
+
+  @override
+  dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
 
   Player player = Player();
   PlaybackState state;
@@ -44,8 +77,10 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
   void buttonChange() {
     setState(() {
       if (state?.basicState == BasicPlaybackState.playing) {
+        _animationController.forward();
         AudioService.pause();
       } else {
+        _animationController.reverse();
         AudioService.play();
       }
     });
@@ -156,21 +191,16 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget> {
 
   Widget buildPlayer(PlaybackState state) {
     if (state?.basicState == BasicPlaybackState.playing) {
-      return IconButton(
-          icon: Icon(
-            Icons.pause_circle_outline,
-            color: Color(0xFFF8665E),
-          ),
-          iconSize: 40,
-          onPressed: buttonChange);
+      _animationController.forward();
+//        IconButton(
+//          icon: Icon(
+//            Icons.pause_circle_outline,
+//            color: Color(0xFFF8665E),
+//          ),
+//          iconSize: 40,
+//          onPressed: buttonChange);
     } else {
-      return IconButton(
-          icon: Icon(
-            Icons.play_circle_outline,
-            color: Color(0xFFF8665E),
-          ),
-          iconSize: 40,
-          onPressed: buttonChange);
+      _animationController.reverse();
     }
   }
 }
