@@ -1,6 +1,6 @@
 # abcradio
 
-Aplicativo de Rádio para ABC Radio
+Um App de Rádio
 
 ## Getting Started
 
