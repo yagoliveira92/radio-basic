@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:abcradio/controllers/player.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:share/share.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert' show utf8;
 
 void main() => runApp(MyApp());
 
@@ -38,6 +40,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   @override
   void initState() {
     super.initState();
+    getMusicName();
     player.initPlaying();
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500))
@@ -73,13 +76,13 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   PageController _myPage = PageController(initialPage: 0);
 
   void buttonChange() {
-      if (state?.basicState == BasicPlaybackState.playing) {
-        _animationController.forward();
-        AudioService.pause();
-      } else {
-        _animationController.reverse();
-        AudioService.play();
-      }
+    if (state?.basicState == BasicPlaybackState.playing) {
+      _animationController.forward();
+      AudioService.pause();
+    } else {
+      _animationController.reverse();
+      AudioService.play();
+    }
   }
 
   Widget build(BuildContext context) {
@@ -170,21 +173,38 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
           builder: (context, snapshot) {
             state = snapshot.data;
             return Container(
-                decoration: BoxDecoration(shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle),
                 height: 120,
                 width: 120,
                 child: FittedBox(
                   child: FloatingActionButton(
                       backgroundColor: mainColor,
                       onPressed: buttonChange,
-                      child: AnimatedIcon(
-                        icon: AnimatedIcons.pause_play,
-                        progress: _animateIcon,
-                      )),
+                      child: Container(
+                        width: 120,
+                        margin: EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                            border: Border.all(color: Color(0xFFF8665E), width: 3)),
+                        child:                       AnimatedIcon(
+                          icon: AnimatedIcons.pause_play,
+                          progress: _animateIcon,
+                          color: Color(0xFFF8665E),
+                          size: 35,
+                        )),
+                      ),
                 ));
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
+  }
+
+  Future getMusicName() async {
+    var response = await http.get("http://stm16.abcaudio.tv:25584/7.html");
+    if (response.statusCode == 200) {
+      print(utf8.decode(response.bodyBytes));
+    }
   }
 
 //  Widget buildPlayer(PlaybackState state) {
