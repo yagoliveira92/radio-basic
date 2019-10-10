@@ -27,9 +27,9 @@ MediaControl stopControl = MediaControl(
 class Player {
 
   initPlaying() {
-    AudioService.connect();
+    connect();
     AudioService.start(
-      backgroundTask: _backgroundAudioPlayerTask,
+      backgroundTaskEntrypoint: _backgroundAudioPlayerTask,
       resumeOnClick: true,
       androidNotificationChannelName: 'ABC Rádio',
       notificationColor: 0x5E6263,
@@ -38,29 +38,26 @@ class Player {
   }
 }
 
-void _backgroundAudioPlayerTask() async {
-
-  AudioServiceBackground.run(
-    onStart: player.run,
-    onPlay: player.play,
-    onPause: player.pause,
-    onStop: player.stop,
-    onClick: (MediaButton button) => player.playPause(),
-  );
+void connect() async {
+  await AudioService.connect();
 }
 
-class CustomAudioPlayer {
+void _backgroundAudioPlayerTask() async {
+  AudioServiceBackground.run(() => CustomAudioPlayer());
+}
+
+class CustomAudioPlayer extends BackgroundAudioTask {
   bool _playing;
   Completer _completer = Completer();
 
-  Future<void> run() async {
+  Future<void> onStart() async {
     MediaItem mediaItem = MediaItem(
         id: 'audio_1',
         album: 'ABC Radio',
         title: 'A rádio que não cansa vc');
     AudioServiceBackground.setMediaItem(mediaItem);
     audioStart();
-    play();
+    onPlay();
     await _completer.future;
   }
 
@@ -71,12 +68,12 @@ class CustomAudioPlayer {
 
   void playPause() {
     if (_playing)
-      pause();
+      onPause();
     else
-      play();
+      onPlay();
   }
 
-  void play() {
+  void onPlay() {
     FlutterRadio.play(url: streamUrl);
     _playing = true;
     AudioServiceBackground.setState(
@@ -84,15 +81,15 @@ class CustomAudioPlayer {
         basicState: BasicPlaybackState.playing);
   }
 
-  void pause() {
+  void onPause() {
     FlutterRadio.playOrPause(url: streamUrl);
     AudioServiceBackground.setState(
         controls: [playControl, stopControl],
         basicState: BasicPlaybackState.paused);
   }
 
-  void stop() {
-    FlutterRadio.playOrPause(url: streamUrl);
+  void onStop() {
+    FlutterRadio.stop();
     AudioServiceBackground.setState(
         controls: [], basicState: BasicPlaybackState.stopped);
     _completer.complete();

@@ -76,6 +76,7 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   PageController _myPage = PageController(initialPage: 0);
 
   void buttonChange() {
+    print("PASSOU!");
     if (state?.basicState == BasicPlaybackState.playing) {
       _animationController.forward();
       AudioService.pause();
@@ -173,27 +174,11 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
           builder: (context, snapshot) {
             state = snapshot.data;
             return Container(
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle),
+                decoration: BoxDecoration(shape: BoxShape.circle),
                 height: 120,
                 width: 120,
                 child: FittedBox(
-                  child: FloatingActionButton(
-                      backgroundColor: mainColor,
-                      onPressed: buttonChange,
-                      child: Container(
-                        width: 120,
-                        margin: EdgeInsets.all(7),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                            border: Border.all(color: Color(0xFFF8665E), width: 3)),
-                        child:                       AnimatedIcon(
-                          icon: AnimatedIcons.pause_play,
-                          progress: _animateIcon,
-                          color: Color(0xFFF8665E),
-                          size: 35,
-                        )),
-                      ),
+                  child: buildPlayer(state),
                 ));
           }),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -207,18 +192,28 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
     }
   }
 
-//  Widget buildPlayer(PlaybackState state) {
-//    if (state?.basicState == BasicPlaybackState.playing) {
-//      _animationController.forward();
-////        IconButton(
-////          icon: Icon(
-////            Icons.pause_circle_outline,
-////            color: Color(0xFFF8665E),
-////          ),
-////          iconSize: 40,
-////          onPressed: buttonChange);
-//    } else {
-//      _animationController.reverse();
-//    }
-//  }
+  Widget buildPlayer(PlaybackState state) {
+    if (state?.basicState == BasicPlaybackState.playing) {
+      _animationController.reverse();
+    } else {
+      _animationController.forward();
+    }
+    return FloatingActionButton(
+      backgroundColor: mainColor,
+      onPressed: buttonChange,
+      child: Container(
+          width: 120,
+          margin: EdgeInsets.all(7.5),
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border:
+              Border.all(color: Color(0xFFF8665E), width: 3.2)),
+          child: AnimatedIcon(
+            icon: AnimatedIcons.pause_play,
+            progress: _animateIcon,
+            color: Color(0xFFF8665E),
+            size: 35,
+          )),
+    );
+  }
 }
