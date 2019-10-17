@@ -11,11 +11,12 @@ import 'dart:convert' show utf8;
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  static const String _title = 'Flutter Code Sample';
+  static const String _title = 'ABC Radio Light';
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      color: Color(0xFF1B203C),
       title: _title,
       home: MyStatefulWidget(),
     );
@@ -40,7 +41,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   @override
   void initState() {
     super.initState();
-    getMusicName();
     player.initPlaying();
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500))
@@ -76,7 +76,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   PageController _myPage = PageController(initialPage: 0);
 
   void buttonChange() {
-    print("PASSOU!");
     if (state?.basicState == BasicPlaybackState.playing) {
       _animationController.forward();
       AudioService.pause();
@@ -185,12 +184,12 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
     );
   }
 
-  Future getMusicName() async {
-    var response = await http.get("http://stm16.abcaudio.tv:25584/7.html");
-    if (response.statusCode == 200) {
-      print(utf8.decode(response.bodyBytes));
-    }
-  }
+//  Future getMusicName() async {
+//    var response = await http.get("http://stm16.abcaudio.tv:25584/7.html");
+//    if (response.statusCode == 200) {
+//      print(utf8.decode(response.bodyBytes));
+//    }
+//  }
 
   Widget buildPlayer(PlaybackState state) {
     if (state?.basicState == BasicPlaybackState.playing) {
