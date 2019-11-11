@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:abcradio/controllers/player.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:share/share.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert' show utf8;
 
 void main() => runApp(MyApp());
 
@@ -88,20 +86,14 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(40),
-        child: AppBar(
-          title: Text('ABC Rádio'),
-          centerTitle: true,
-          backgroundColor: mainColor,
-        ),
-      ),
       body: Stack(
         children: <Widget>[
           PageView(
             controller: _myPage,
             children: <Widget>[
-              Home(),
+              Home(
+                key: PageStorageKey('Home')
+              ),
               Contato(),
             ],
           ),
@@ -183,13 +175,6 @@ class _MyStatefulWidgetState extends State<MyStatefulWidget>
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
-
-//  Future getMusicName() async {
-//    var response = await http.get("http://stm16.abcaudio.tv:25584/7.html");
-//    if (response.statusCode == 200) {
-//      print(utf8.decode(response.bodyBytes));
-//    }
-//  }
 
   Widget buildPlayer(PlaybackState state) {
     if (state?.basicState == BasicPlaybackState.playing) {

@@ -25,7 +25,6 @@ MediaControl stopControl = MediaControl(
     action: MediaAction.stop);
 
 class Player {
-
   initPlaying() {
     connect();
     AudioService.start(
@@ -49,12 +48,12 @@ void _backgroundAudioPlayerTask() async {
 class CustomAudioPlayer extends BackgroundAudioTask {
   bool _playing;
   Completer _completer = Completer();
+  MediaItem mediaItem = MediaItem(
+      id: 'audio_1',
+      album: 'ABC Radio',
+      title: 'A rádio que não cansa vc');
 
   Future<void> onStart() async {
-    MediaItem mediaItem = MediaItem(
-        id: 'audio_1',
-        album: 'ABC Radio',
-        title: 'A rádio que não cansa vc');
     AudioServiceBackground.setMediaItem(mediaItem);
     audioStart();
     onPlay();
@@ -63,7 +62,6 @@ class CustomAudioPlayer extends BackgroundAudioTask {
 
   Future<void> audioStart() async {
     await FlutterRadio.audioStart();
-    print('Audio Start OK');
   }
 
   void playPause() {
