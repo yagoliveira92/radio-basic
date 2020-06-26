@@ -1,6 +1,6 @@
-# abcradio
+# radiobasic
 
-Um App de Rádio
+Radio Application OpenSource
 
 ## Getting Started
 

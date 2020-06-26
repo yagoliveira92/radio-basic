@@ -12,7 +12,7 @@ class Contato extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   Text(
-                    'ABC Radio',
+                    'Igreja em Aracaju',
                     style: TextStyle(fontSize: 18),
                   ),
                   Text('Todos os Direitos Reservados',
@@ -24,10 +24,21 @@ class Contato extends StatelessWidget {
                       painter: Drawhorizontalline(),
                     ),
                   ),
-                  Padding(padding: EdgeInsets.only(bottom: 20), child: Image.asset('assets/ponto.png'),),
                   Image.asset(
                     'assets/abc_logo.png',
                     width: 150,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 50),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          'Desenvolvido por',
+                          style: TextStyle(fontSize: 18),
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 12), child: Image.asset('assets/logo_tecnocamp.png', height: 50,)),
+                      ],
+                    ),
                   )
                 ],
               ))
