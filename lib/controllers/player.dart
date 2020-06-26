@@ -1,9 +1,10 @@
+import 'dart:io';
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter_radio/flutter_radio.dart';
 import 'dart:async';
 
-const streamUrl =
-    'http://stm16.abcaudio.tv:25584/player.mp3';
+import 'package:just_audio/just_audio.dart';
+
+const streamUrl = 'http://srv9.abcradio.com.br:7002/listen.mp3';
 
 bool buttonState = true;
 
@@ -24,72 +25,65 @@ MediaControl stopControl = MediaControl(
     label: 'Stop',
     action: MediaAction.stop);
 
+void _backgroundTaskEntrypoint() =>
+    AudioServiceBackground.run(() => CustomAudioPlayer());
+
 class Player {
-  initPlaying() {
-    connect();
-    AudioService.start(
-      backgroundTaskEntrypoint: _backgroundAudioPlayerTask,
-      resumeOnClick: true,
-      androidNotificationChannelName: 'ABC Rádio',
-      notificationColor: 0x5E6263,
-      androidNotificationIcon: 'mipmap/radio',
+  initPlaying() async {
+    await AudioService.start(
+      backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
+      androidNotificationChannelName: 'Audio Service Demo',
+      androidNotificationColor: 0xFF2196f3,
+      androidNotificationIcon: 'mipmap/ic_launcher',
     );
+  }
+
+  pause() {
+    AudioService.pause();
   }
 }
 
-void connect() async {
-  await AudioService.connect();
-}
-
-void _backgroundAudioPlayerTask() async {
+void _audioPlayerTaskEntrypoint() async {
   AudioServiceBackground.run(() => CustomAudioPlayer());
 }
 
 class CustomAudioPlayer extends BackgroundAudioTask {
-  bool _playing;
-  Completer _completer = Completer();
-  MediaItem mediaItem = MediaItem(
-      id: 'audio_1',
-      album: 'ABC Radio',
-      title: 'A rádio que não cansa vc');
+  final _audioPlayer = AudioPlayer();
+  final _completer = Completer();
 
-  Future<void> onStart() async {
-    AudioServiceBackground.setMediaItem(mediaItem);
-    audioStart();
-    onPlay();
-    await _completer.future;
+  @override
+  Future<void> onStart(Map<String, dynamic> params) async {
+    print("Iniciou o onStart");
+    await _audioPlayer.setUrl(streamUrl);
+    _audioPlayer.play();
   }
 
-  Future<void> audioStart() async {
-    await FlutterRadio.audioStart();
-  }
+  // @override
+  // void onPlay() {
+  //   AudioServiceBackground.setState(
+  //       controls: [pauseControl, stopControl],
+  //       playing: true,
+  //       processingState: AudioProcessingState.ready);
+  //   _audioPlayer.play();
+  // }
 
-  void playPause() {
-    if (_playing)
-      onPause();
-    else
-      onPlay();
-  }
+  // @override
+  // void onPause() {
+  //   AudioServiceBackground.setState(
+  //       controls: [playControl, stopControl],
+  //       playing: false,
+  //       processingState: AudioProcessingState.ready);
+  //   _audioPlayer.pause();
+  // }
 
-  void onPlay() {
-    FlutterRadio.play(url: streamUrl);
-    _playing = true;
-    AudioServiceBackground.setState(
-        controls: [pauseControl, stopControl],
-        basicState: BasicPlaybackState.playing);
-  }
-
-  void onPause() {
-    FlutterRadio.playOrPause(url: streamUrl);
-    AudioServiceBackground.setState(
-        controls: [playControl, stopControl],
-        basicState: BasicPlaybackState.paused);
-  }
-
-  void onStop() {
-    FlutterRadio.stop();
-    AudioServiceBackground.setState(
-        controls: [], basicState: BasicPlaybackState.stopped);
-    _completer.complete();
+  @override
+  Future<void> onStop() async {
+    await _audioPlayer.stop();
+    await super.onStop();
+    // await AudioServiceBackground.setState(
+    //     controls: [],
+    //     playing: false,
+    //     processingState: AudioProcessingState.stopped);
+    // exit(0);
   }
 }
