@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_service/audio_service.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:radiobasic/controllers/player.dart';
 import 'package:radiobasic/pages/contato.dart';
 import 'package:radiobasic/pages/cover_page.dart';
 import 'package:radiobasic/pages/pedido_musica.dart';
@@ -19,6 +19,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   bool isOpened = false;
+  Player player = Player();
   AnimationController _animationController;
   Animation<Color> _animateColor;
   Animation<double> _animateIcon;
@@ -32,6 +33,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _verificarConectividade();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      player.initPlaying();
+    });
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500))
           ..addListener(() {
@@ -85,10 +89,10 @@ Verifique sua conexão e tente novamente'''),
   void buttonChange(bool playing) {
     if (playing == AudioService.playbackState.playing) {
       _animationController.forward();
-      // player.pause();
+      player.pause();
     } else {
       _animationController.reverse();
-      // AudioService.play();
+      AudioService.play();
     }
   }
 
@@ -212,15 +216,14 @@ Verifique sua conexão e tente novamente'''),
   }
 
   Widget buildPlayer(bool playing) {
-    // if (playing == AudioService.playbackState.playing) {
-    //   _animationController.reverse();
-    // } else {
-    //   _animationController.forward();
-    // }
+    if (playing == AudioService.playbackState.playing) {
+      _animationController.reverse();
+    } else {
+      _animationController.forward();
+    }
     return FloatingActionButton(
       backgroundColor: mainColor,
-      onPressed: start,
-      // onPressed: () => buttonChange(playing),
+      onPressed: () => buttonChange(playing),
       child: Container(
           width: 120,
           margin: EdgeInsets.all(7.5),
@@ -234,69 +237,5 @@ Verifique sua conexão e tente novamente'''),
             size: 35,
           )),
     );
-  }
-
-  start() {
-    AudioService.start(backgroundTaskEntrypoint: backgroundTaskEntrypoint);
-  }
-}
-
-// class Player {
-//   initPlaying() async {
-//     await AudioService.start(
-//       backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
-//       androidNotificationChannelName: 'Audio Service Demo',
-//       androidNotificationColor: 0xFF2196f3,
-//       androidNotificationIcon: 'mipmap/ic_launcher',
-//     );
-//   }
-
-//   pause() {
-//     AudioService.pause();
-//   }
-// }
-
-void backgroundTaskEntrypoint() async {
-  await AudioServiceBackground.run(() => CustomAudioPlayer());
-}
-
-class CustomAudioPlayer extends BackgroundAudioTask {
-  final _audioPlayer = AudioPlayer();
-  final _completer = Completer();
-
-  @override
-  Future<void> onStart(Map<String, dynamic> params) async {
-    print("Iniciou o onStart");
-    await _audioPlayer.setUrl('http://srv9.abcradio.com.br:7002/listen.mp3');
-    _audioPlayer.play();
-  }
-
-  // @override
-  // void onPlay() {
-  //   AudioServiceBackground.setState(
-  //       controls: [pauseControl, stopControl],
-  //       playing: true,
-  //       processingState: AudioProcessingState.ready);
-  //   _audioPlayer.play();
-  // }
-
-  // @override
-  // void onPause() {
-  //   AudioServiceBackground.setState(
-  //       controls: [playControl, stopControl],
-  //       playing: false,
-  //       processingState: AudioProcessingState.ready);
-  //   _audioPlayer.pause();
-  // }
-
-  @override
-  Future<void> onStop() async {
-    await _audioPlayer.stop();
-    await super.onStop();
-    // await AudioServiceBackground.setState(
-    //     controls: [],
-    //     playing: false,
-    //     processingState: AudioProcessingState.stopped);
-    // exit(0);
   }
 }

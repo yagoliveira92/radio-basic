@@ -17,9 +17,9 @@ class _FirstPageState extends State<FirstPage> {
 
   @override
   void initState() {
-    // Timer.periodic(Duration(seconds: 5), (timer) {
-    //   controller.getMetadata();
-    // });
+    Timer.periodic(Duration(seconds: 5), (timer) {
+      controller.getMetadata();
+    });
     super.initState();
   }
 
