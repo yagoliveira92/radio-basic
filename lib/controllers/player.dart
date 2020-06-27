@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:audio_service/audio_service.dart';
 import 'dart:async';
 
@@ -30,12 +31,14 @@ void _backgroundTaskEntrypoint() =>
 
 class Player {
   initPlaying() async {
-    await AudioService.start(
-      backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
-      androidNotificationChannelName: 'Audio Service Demo',
-      androidNotificationColor: 0xFF2196f3,
-      androidNotificationIcon: 'mipmap/ic_launcher',
-    );
+    await AudioService.connect().then((_) {
+      AudioService.start(
+        backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
+        androidNotificationChannelName: 'Audio Service Demo',
+        androidNotificationColor: 0xFF2196f3,
+        androidNotificationIcon: 'mipmap/ic_launcher',
+      );
+    });
   }
 
   pause() {
@@ -58,32 +61,32 @@ class CustomAudioPlayer extends BackgroundAudioTask {
     _audioPlayer.play();
   }
 
-  // @override
-  // void onPlay() {
-  //   AudioServiceBackground.setState(
-  //       controls: [pauseControl, stopControl],
-  //       playing: true,
-  //       processingState: AudioProcessingState.ready);
-  //   _audioPlayer.play();
-  // }
+  @override
+  void onPlay() {
+    AudioServiceBackground.setState(
+        controls: [pauseControl, stopControl],
+        playing: true,
+        processingState: AudioProcessingState.ready);
+    _audioPlayer.play();
+  }
 
-  // @override
-  // void onPause() {
-  //   AudioServiceBackground.setState(
-  //       controls: [playControl, stopControl],
-  //       playing: false,
-  //       processingState: AudioProcessingState.ready);
-  //   _audioPlayer.pause();
-  // }
+  @override
+  void onPause() {
+    AudioServiceBackground.setState(
+        controls: [playControl, stopControl],
+        playing: false,
+        processingState: AudioProcessingState.ready);
+    _audioPlayer.pause();
+  }
 
   @override
   Future<void> onStop() async {
     await _audioPlayer.stop();
     await super.onStop();
-    // await AudioServiceBackground.setState(
-    //     controls: [],
-    //     playing: false,
-    //     processingState: AudioProcessingState.stopped);
-    // exit(0);
+    await AudioServiceBackground.setState(
+        controls: [],
+        playing: false,
+        processingState: AudioProcessingState.stopped);
+    exit(0);
   }
 }
