@@ -54,9 +54,11 @@ class _FirstPageState extends State<FirstPage> {
                   builder: (_) {
                     return Column(
                       children: <Widget>[
-                        Image.network(
-                          controller.coverAlbum,
-                          height: 230,
+                        ClipOval(
+                          child: Image.network(
+                            controller.coverAlbum,
+                            height: 230,
+                          ),
                         ),
                         Padding(
                           child: Text(

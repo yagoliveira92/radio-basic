@@ -2,6 +2,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:radiobasic/controllers/cover-controller.dart';
+import 'package:radiobasic/controllers/player.dart';
 import 'package:radiobasic/pages/home.dart';
 import 'package:splashscreen/splashscreen.dart';
 
@@ -32,8 +33,10 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
+  var player = Player();
   @override
   void initState() {
+    player.initPlaying();
     super.initState();
   }
 

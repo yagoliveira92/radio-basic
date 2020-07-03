@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:audio_service/audio_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:radiobasic/controllers/player.dart';
 import 'dart:convert' as convert;
 import 'package:radiobasic/models/music_metadata.dart';
 import 'package:mobx/mobx.dart';
@@ -23,6 +25,8 @@ abstract class _CoverControllerBase with Store {
   String _nameMusicShoutcast;
   List<String> responseShoutcast;
 
+  var player = Player();
+
   @action
   Future getMetadata() async {
     var response = await http.get('http://srv9.abcradio.com.br:7002/7.html');
@@ -34,6 +38,7 @@ abstract class _CoverControllerBase with Store {
       if (_nameMusicShoutcast == responseShoutcast[6]) {
         return _metadata;
       } else {
+        _nameMusicShoutcast = responseShoutcast[6];
         var itunesResponse = await http.get(
             'https://itunes.apple.com/search?term=${responseShoutcast[6]}&limit=1');
         if (itunesResponse.statusCode == 200) {
@@ -52,6 +57,14 @@ abstract class _CoverControllerBase with Store {
             artistName = '"Ide e fazei discípulos de todas as nações"';
             coverAlbum = 'https://tecnocamp.info/assets/noimageavailable.jpg';
           }
+          var mediaItem = {
+            'mediaID': 'audio_1',
+            'mediaAlbum': artistName,
+            'mediaTitle': musicName,
+            'mediaCover': coverAlbum
+          };
+          print(mediaItem);
+          player.updateMedia(mediaItem);
         }
       }
     }

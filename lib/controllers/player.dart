@@ -1,9 +1,8 @@
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter_radio/flutter_radio.dart';
 import 'dart:async';
-
-import 'package:just_audio/just_audio.dart';
 
 const streamUrl = 'http://srv9.abcradio.com.br:7002/listen.mp3';
 
@@ -11,39 +10,57 @@ bool buttonState = true;
 
 CustomAudioPlayer player = CustomAudioPlayer();
 
-MediaControl playControl = MediaControl(
+final playControl = MediaControl(
   androidIcon: 'drawable/ic_action_play_arrow',
   label: 'Play',
   action: MediaAction.play,
 );
-MediaControl pauseControl = MediaControl(
+final pauseControl = MediaControl(
   androidIcon: 'drawable/ic_action_pause',
   label: 'Pause',
   action: MediaAction.pause,
 );
-MediaControl stopControl = MediaControl(
+final stopControl = MediaControl(
     androidIcon: 'drawable/ic_action_stop',
     label: 'Stop',
     action: MediaAction.stop);
 
-void _backgroundTaskEntrypoint() =>
-    AudioServiceBackground.run(() => CustomAudioPlayer());
-
 class Player {
-  initPlaying() async {
-    await AudioService.connect().then((_) {
-      AudioService.start(
-        backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
-        androidNotificationChannelName: 'Audio Service Demo',
-        androidNotificationColor: 0xFF2196f3,
-        androidNotificationIcon: 'mipmap/ic_launcher',
-      );
-    });
+  static final Player _singleton = Player._internal();
+
+  factory Player() {
+    return _singleton;
   }
 
-  pause() {
-    AudioService.pause();
+  Player._internal();
+
+  initPlaying() {
+    connect();
+    AudioService.start(
+      backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
+      androidNotificationChannelName: 'Audio Service Demo',
+      androidNotificationColor: 0xFF2196f3,
+      androidNotificationIcon: 'mipmap/ic_launcher',
+    );
   }
+
+  pause() => AudioService.pause();
+
+  play() async {
+    if (await AudioService.running) {
+      AudioService.play();
+    } else {
+      initPlaying();
+    }
+  }
+
+  updateMedia(Map<String, dynamic> _media) async {
+    await AudioService.customAction('updateMedia', _media);
+  }
+}
+
+void connect() async {
+  await AudioService.connect();
 }
 
 void _audioPlayerTaskEntrypoint() async {
@@ -51,14 +68,31 @@ void _audioPlayerTaskEntrypoint() async {
 }
 
 class CustomAudioPlayer extends BackgroundAudioTask {
-  final _audioPlayer = AudioPlayer();
-  final _completer = Completer();
+  MediaItem mediaItem = MediaItem(
+      id: 'audio_1',
+      album: 'Igreja em Aracaju',
+      title: 'Jesus é Deus',
+      artUri: 'https://tecnocamp.info/assets/noimageavailable.jpg');
+
+  Future<void> audioStart() async {
+    await FlutterRadio.audioStart();
+    print('Audio Start OK');
+  }
 
   @override
-  Future<void> onStart(Map<String, dynamic> params) async {
+  onStart(Map<String, dynamic> params) async {
     print("Iniciou o onStart");
-    await _audioPlayer.setUrl(streamUrl);
-    _audioPlayer.play();
+    AudioServiceBackground.setState(
+        controls: [pauseControl, stopControl],
+        playing: true,
+        processingState: AudioProcessingState.ready);
+    await FlutterRadio.audioStart();
+    FlutterRadio.playOrPause(url: streamUrl);
+    AudioServiceBackground.setMediaItem(mediaItem);
+    AudioServiceBackground.setState(
+        controls: [pauseControl, stopControl],
+        playing: true,
+        processingState: AudioProcessingState.ready);
   }
 
   @override
@@ -67,7 +101,7 @@ class CustomAudioPlayer extends BackgroundAudioTask {
         controls: [pauseControl, stopControl],
         playing: true,
         processingState: AudioProcessingState.ready);
-    _audioPlayer.play();
+    FlutterRadio.playOrPause(url: streamUrl);
   }
 
   @override
@@ -76,17 +110,26 @@ class CustomAudioPlayer extends BackgroundAudioTask {
         controls: [playControl, stopControl],
         playing: false,
         processingState: AudioProcessingState.ready);
-    _audioPlayer.pause();
+    FlutterRadio.pause(url: streamUrl);
   }
 
   @override
   Future<void> onStop() async {
-    await _audioPlayer.stop();
+    await FlutterRadio.stop();
+    exit(0);
     await super.onStop();
     await AudioServiceBackground.setState(
         controls: [],
         playing: false,
         processingState: AudioProcessingState.stopped);
-    exit(0);
+  }
+
+  @override
+  Future onCustomAction(_function, params) {
+    AudioServiceBackground.setMediaItem(MediaItem(
+        id: params['mediaID'],
+        album: params['mediaAlbum'],
+        title: params['mediaTitle'],
+        artUri: params['mediaCover']));
   }
 }
