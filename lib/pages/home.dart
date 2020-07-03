@@ -24,7 +24,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   Animation<Color> _animateColor;
   Animation<double> _animateIcon;
   Curve _curve = Curves.easeOut;
-  PlaybackState state;
   bool buttonState = true;
   Color mainColor = Color(0xFFE47833);
   PageController _myPage = PageController(initialPage: 0);
@@ -33,9 +32,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _verificarConectividade();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      player.initPlaying();
-    });
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500))
           ..addListener(() {
@@ -92,7 +88,7 @@ Verifique sua conexão e tente novamente'''),
       player.pause();
     } else {
       _animationController.reverse();
-      AudioService.play();
+      player.play();
     }
   }
 
