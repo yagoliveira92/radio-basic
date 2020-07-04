@@ -9,6 +9,7 @@ import 'package:splashscreen/splashscreen.dart';
 void main() {
   GetIt getIt = GetIt.I;
   getIt.registerLazySingleton<CoverController>(() => CoverController());
+  getIt.registerLazySingleton<Player>(() => Player());
   runApp(MyApp());
 }
 
@@ -33,7 +34,7 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  var player = Player();
+  final player = GetIt.I.get<Player>();
   @override
   void initState() {
     player.initPlaying();

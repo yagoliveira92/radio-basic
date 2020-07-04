@@ -26,16 +26,7 @@ final stopControl = MediaControl(
     action: MediaAction.stop);
 
 class Player {
-  static final Player _singleton = Player._internal();
-
-  factory Player() {
-    return _singleton;
-  }
-
-  Player._internal();
-
-  initPlaying() {
-    connect();
+  Future initPlaying() async {
     AudioService.start(
       backgroundTaskEntrypoint: _audioPlayerTaskEntrypoint,
       androidNotificationChannelName: 'Audio Service Demo',
@@ -44,7 +35,9 @@ class Player {
     );
   }
 
-  pause() => AudioService.pause();
+  pause() async {
+    AudioService.pause();
+  }
 
   play() async {
     if (await AudioService.running) {
@@ -57,10 +50,6 @@ class Player {
   updateMedia(Map<String, dynamic> _media) async {
     await AudioService.customAction('updateMedia', _media);
   }
-}
-
-void connect() async {
-  await AudioService.connect();
 }
 
 void _audioPlayerTaskEntrypoint() async {
@@ -76,23 +65,17 @@ class CustomAudioPlayer extends BackgroundAudioTask {
 
   Future<void> audioStart() async {
     await FlutterRadio.audioStart();
-    print('Audio Start OK');
   }
 
   @override
   onStart(Map<String, dynamic> params) async {
-    print("Iniciou o onStart");
-    AudioServiceBackground.setState(
-        controls: [pauseControl, stopControl],
-        playing: true,
-        processingState: AudioProcessingState.ready);
-    await FlutterRadio.audioStart();
-    FlutterRadio.playOrPause(url: streamUrl);
     AudioServiceBackground.setMediaItem(mediaItem);
     AudioServiceBackground.setState(
         controls: [pauseControl, stopControl],
         playing: true,
         processingState: AudioProcessingState.ready);
+    await audioStart();
+    onPlay();
   }
 
   @override
@@ -101,7 +84,7 @@ class CustomAudioPlayer extends BackgroundAudioTask {
         controls: [pauseControl, stopControl],
         playing: true,
         processingState: AudioProcessingState.ready);
-    FlutterRadio.playOrPause(url: streamUrl);
+    FlutterRadio.play(url: streamUrl);
   }
 
   @override
