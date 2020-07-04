@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:get_it/get_it.dart';
 import 'package:radiobasic/controllers/player.dart';
 import 'package:radiobasic/pages/contato.dart';
 import 'package:radiobasic/pages/cover_page.dart';
@@ -19,7 +20,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   bool isOpened = false;
-  Player player = Player();
+  final player = GetIt.I.get<Player>();
   AnimationController _animationController;
   Animation<Color> _animateColor;
   Animation<double> _animateIcon;
@@ -82,8 +83,8 @@ Verifique sua conexão e tente novamente'''),
     super.dispose();
   }
 
-  void buttonChange(bool playing) {
-    if (playing == AudioService.playbackState.playing) {
+  void buttonChange() {
+    if (AudioServiceBackground.state.playing) {
       _animationController.forward();
       player.pause();
     } else {
@@ -203,7 +204,7 @@ Verifique sua conexão e tente novamente'''),
                   height: 120,
                   width: 120,
                   child: FittedBox(
-                    child: buildPlayer(playing),
+                    child: buildPlayer(),
                   ));
             }),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -211,15 +212,15 @@ Verifique sua conexão e tente novamente'''),
     );
   }
 
-  Widget buildPlayer(bool playing) {
-    if (playing == AudioService.playbackState.playing) {
+  Widget buildPlayer() {
+    if (AudioService.playbackState.playing) {
       _animationController.reverse();
     } else {
       _animationController.forward();
     }
     return FloatingActionButton(
       backgroundColor: mainColor,
-      onPressed: () => buttonChange(playing),
+      onPressed: () => buttonChange(),
       child: Container(
           width: 120,
           margin: EdgeInsets.all(7.5),

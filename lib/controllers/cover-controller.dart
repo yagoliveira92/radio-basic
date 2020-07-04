@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:audio_service/audio_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:radiobasic/controllers/player.dart';
 import 'dart:convert' as convert;
@@ -29,7 +28,9 @@ abstract class _CoverControllerBase with Store {
 
   @action
   Future getMetadata() async {
-    var response = await http.get('http://srv9.abcradio.com.br:7002/7.html');
+    var response = await http
+        .get('http://srv9.abcradio.com.br:7002/7.html')
+        .catchError((_) => print("Erro ao se comunicar com o Streaming!"));
     if (response.statusCode == 200) {
       RegExp exp = RegExp('(?<=<body>)(.*)(?=<\/body>)');
       RegExpMatch matches =
@@ -63,7 +64,6 @@ abstract class _CoverControllerBase with Store {
             'mediaTitle': musicName,
             'mediaCover': coverAlbum
           };
-          print(mediaItem);
           player.updateMedia(mediaItem);
         }
       }
