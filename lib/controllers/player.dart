@@ -57,6 +57,7 @@ void _audioPlayerTaskEntrypoint() async {
 }
 
 class CustomAudioPlayer extends BackgroundAudioTask {
+  Completer _completer = Completer();
   MediaItem mediaItem = MediaItem(
       id: 'audio_1',
       album: 'Igreja em Aracaju',
@@ -76,6 +77,7 @@ class CustomAudioPlayer extends BackgroundAudioTask {
         processingState: AudioProcessingState.ready);
     await audioStart();
     onPlay();
+    await _completer.future;
   }
 
   @override
