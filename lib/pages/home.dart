@@ -32,6 +32,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    player.initPlaying();
     _verificarConectividade();
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500))
@@ -84,7 +85,7 @@ Verifique sua conexão e tente novamente'''),
   }
 
   void buttonChange() {
-    if (AudioServiceBackground.state.playing) {
+    if (AudioService.playbackState.playing) {
       _animationController.forward();
       player.pause();
     } else {
@@ -119,95 +120,98 @@ Verifique sua conexão e tente novamente'''),
   }
 
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => _sairDoApp(context),
-      child: Scaffold(
-        extendBody: true,
-        body: Stack(
-          children: <Widget>[
-            PageView(
-              controller: _myPage,
-              children: <Widget>[
-                FirstPage(key: PageStorageKey('Home')),
-                Contato(),
-              ],
-            ),
-          ],
-        ),
-        bottomNavigationBar: BottomAppBar(
-            color: mainColor,
-            shape: const CircularNotchedRectangle(),
-            notchMargin: 5,
-            child: Container(
-              height: 90,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return AudioServiceWidget(
+      child: WillPopScope(
+        onWillPop: () => _sairDoApp(context),
+        child: Scaffold(
+          extendBody: true,
+          body: Stack(
+            children: <Widget>[
+              PageView(
+                controller: _myPage,
                 children: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      Icons.home,
-                      color: Color(0xFF055D6F),
-                      size: 35,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _myPage.jumpToPage(0);
-                      });
-                    },
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(right: 120),
-                    child: IconButton(
-                      icon: Icon(Icons.mail_outline,
-                          color: Color(0xFF055D6F), size: 35),
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => PedidoMusica()));
-                      },
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.share,
-                      color: Color(0xFF055D6F),
-                      size: 35,
-                    ),
-                    onPressed: () {
-                      Share.share(
-                          "Ouça a rádio que edifica você: https://play.google.com/store/apps/details?id=br.com.igrejaemaracaju.radio");
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.record_voice_over,
-                      color: Color(0xFF055D6F),
-                      size: 35,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _myPage.jumpToPage(1);
-                      });
-                    },
-                  )
+                  FirstPage(key: PageStorageKey('Home')),
+                  Contato(),
                 ],
               ),
-            )),
-        floatingActionButton: StreamBuilder<PlaybackState>(
-            stream: AudioService.playbackStateStream,
-            builder: (context, snapshot) {
-              final playing = snapshot.data?.playing ?? false;
-              return Container(
-                  decoration: BoxDecoration(shape: BoxShape.circle),
-                  height: 120,
-                  width: 120,
-                  child: FittedBox(
-                    child: buildPlayer(),
-                  ));
-            }),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            ],
+          ),
+          bottomNavigationBar: BottomAppBar(
+              color: mainColor,
+              shape: const CircularNotchedRectangle(),
+              notchMargin: 5,
+              child: Container(
+                height: 90,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        Icons.home,
+                        color: Color(0xFF1B203C),
+                        size: 35,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _myPage.jumpToPage(0);
+                        });
+                      },
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 120),
+                      child: IconButton(
+                        icon: Icon(Icons.mail_outline,
+                            color: Color(0xFF1B203C), size: 35),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => PedidoMusica()));
+                        },
+                      ),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.share,
+                        color: Color(0xFF1B203C),
+                        size: 35,
+                      ),
+                      onPressed: () {
+                        Share.share(
+                            "Ouça a rádio que edifica você: https://play.google.com/store/apps/details?id=br.com.igrejaemaracaju.radio");
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.record_voice_over,
+                        color: Color(0xFF1B203C),
+                        size: 35,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _myPage.jumpToPage(1);
+                        });
+                      },
+                    )
+                  ],
+                ),
+              )),
+          floatingActionButton: StreamBuilder<PlaybackState>(
+              stream: AudioService.playbackStateStream,
+              builder: (context, snapshot) {
+                final playing = snapshot.data?.playing ?? false;
+                return Container(
+                    decoration: BoxDecoration(shape: BoxShape.circle),
+                    height: 120,
+                    width: 120,
+                    child: FittedBox(
+                      child: buildPlayer(),
+                    ));
+              }),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+        ),
       ),
     );
   }
@@ -226,11 +230,11 @@ Verifique sua conexão e tente novamente'''),
           margin: EdgeInsets.all(7.5),
           decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: Color(0xFF055D6F), width: 3.2)),
+              border: Border.all(color: Color(0xFF1B203C), width: 3.2)),
           child: AnimatedIcon(
             icon: AnimatedIcons.pause_play,
             progress: _animateIcon,
-            color: Color(0xFF055D6F),
+            color: Color(0xFF1B203C),
             size: 35,
           )),
     );
