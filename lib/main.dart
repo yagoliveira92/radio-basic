@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       color: Color(0xFFF6C33A),
       title: _title,
-      home: AudioServiceWidget(child: MyStatefulWidget()),
+      home: MyStatefulWidget(),
     );
   }
 }
@@ -34,10 +34,8 @@ class MyStatefulWidget extends StatefulWidget {
 }
 
 class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  final player = GetIt.I.get<Player>();
   @override
   void initState() {
-    player.initPlaying();
     super.initState();
   }
 
