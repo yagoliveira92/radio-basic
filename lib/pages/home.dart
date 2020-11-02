@@ -5,10 +5,11 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:get_it/get_it.dart';
+import 'package:radiobasic/assets/redes_sociais_icons.dart';
 import 'package:radiobasic/controllers/player.dart';
 import 'package:radiobasic/pages/contato.dart';
 import 'package:radiobasic/pages/cover_page.dart';
-import 'package:radiobasic/pages/pedido_musica.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:share/share.dart';
 
 class Home extends StatefulWidget {
@@ -60,21 +61,22 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {
       showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text('Ops!'),
-              content: Text('''Não foi possível conectar com a internet. 
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Ops!'),
+            content: Text('''Não foi possível conectar com a internet. 
 Verifique sua conexão e tente novamente'''),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text('Fechar'),
-                  onPressed: () => exit(0),
-                )
-              ],
-            );
-          });
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Fechar'),
+                onPressed: () => exit(0),
+              )
+            ],
+          );
+        },
+      );
     }
   }
 
@@ -141,58 +143,90 @@ Verifique sua conexão e tente novamente'''),
               shape: const CircularNotchedRectangle(),
               notchMargin: 5,
               child: Container(
-                height: 90,
+                height: 70,
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.home,
-                        color: Color(0xFF1B203C),
-                        size: 35,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _myPage.jumpToPage(0);
-                        });
-                      },
+                    Column(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(
+                            RedesSociais.icn_radio_white,
+                            color: Color(0xFF1B203C),
+                            size: 35,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _myPage.jumpToPage(0);
+                            });
+                          },
+                        ),
+                        Text(
+                          "Rádio",
+                          style: TextStyle(fontSize: 10),
+                        )
+                      ],
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(right: 120),
-                      child: IconButton(
-                        icon: Icon(Icons.mail_outline,
-                            color: Color(0xFF1B203C), size: 35),
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => PedidoMusica()));
-                        },
-                      ),
+                    Column(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(RedesSociais.icn_whts,
+                              color: Color(0xFF1B203C), size: 35),
+                          onPressed: () {
+                            launch(
+                              "https://api.whatsapp.com/send?phone=5579981558855&text=Opa!%20Quero%20pedir%20uma%20m%C3%BAsica!",
+                            );
+                          },
+                        ),
+                        Text(
+                          "Whatsapp",
+                          style: TextStyle(fontSize: 10),
+                        )
+                      ],
                     ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.share,
-                        color: Color(0xFF1B203C),
-                        size: 35,
-                      ),
-                      onPressed: () {
-                        Share.share(
-                            "Ouça a rádio que edifica você: https://play.google.com/store/apps/details?id=br.com.igrejaemaracaju.radio");
-                      },
+                    SizedBox(
+                      width: 110,
                     ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.record_voice_over,
-                        color: Color(0xFF1B203C),
-                        size: 35,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _myPage.jumpToPage(1);
-                        });
-                      },
+                    Column(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(
+                            RedesSociais.g24,
+                            color: Color(0xFF1B203C),
+                            size: 35,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _myPage.jumpToPage(1);
+                            });
+                          },
+                        ),
+                        Text(
+                          "Redes",
+                          style: TextStyle(fontSize: 10),
+                        )
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(
+                            RedesSociais.icn_cmprt,
+                            color: Color(0xFF1B203C),
+                            size: 35,
+                          ),
+                          onPressed: () {
+                            Share.share(
+                                '''Ouça a rádio que trás o melhor do flashback: 
+https://play.google.com/store/apps/details?id=br.abcradio.web''');
+                          },
+                        ),
+                        Text(
+                          "Compartilhe",
+                          style: TextStyle(fontSize: 10),
+                        )
+                      ],
                     )
                   ],
                 ),
@@ -200,11 +234,10 @@ Verifique sua conexão e tente novamente'''),
           floatingActionButton: StreamBuilder<PlaybackState>(
               stream: AudioService.playbackStateStream,
               builder: (context, snapshot) {
-                final playing = snapshot.data?.playing ?? false;
                 return Container(
                     decoration: BoxDecoration(shape: BoxShape.circle),
-                    height: 120,
-                    width: 120,
+                    height: 100,
+                    width: 100,
                     child: FittedBox(
                       child: buildPlayer(),
                     ));

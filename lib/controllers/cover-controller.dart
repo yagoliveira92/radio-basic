@@ -16,10 +16,10 @@ abstract class _CoverControllerBase with Store {
   String coverAlbum = 'https://tecnocamp.info/assets/noimageavailable.jpg';
 
   @observable
-  String artistName = '"Ide e fazei discípulos de todas as nações"';
+  String artistName = 'A rádio que não cansa você';
 
   @observable
-  String musicName = "Igreja em Aracaju";
+  String musicName = "ABC Radio";
 
   String _nameMusicShoutcast;
   List<String> responseShoutcast;
@@ -29,7 +29,7 @@ abstract class _CoverControllerBase with Store {
   @action
   Future getMetadata() async {
     var response = await http
-        .get('http://srv9.abcradio.com.br:7002/7.html')
+        .get('http://player.stmsrv.com:25584/7.html')
         .catchError((_) => print("Erro ao se comunicar com o Streaming!"));
     if (response.statusCode == 200) {
       RegExp exp = RegExp('(?<=<body>)(.*)(?=<\/body>)');
@@ -54,8 +54,8 @@ abstract class _CoverControllerBase with Store {
             artistName = _metadata[0].artistName;
           } else {
             _metadata = [];
-            musicName = "Igreja em Aracaju";
-            artistName = '"Ide e fazei discípulos de todas as nações"';
+            musicName = "ABC Rádio";
+            artistName = "A rádio que não cansa você";
             coverAlbum = 'https://tecnocamp.info/assets/noimageavailable.jpg';
           }
           var mediaItem = {

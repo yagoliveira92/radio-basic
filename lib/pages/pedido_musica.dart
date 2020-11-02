@@ -102,7 +102,7 @@ class _PedidoMusicaState extends State<PedidoMusica> {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(bottom: 10),
-                  child: Image.asset('assets/logo_igreja.png'),
+                  child: Image.asset('assets/abc_logo.png'),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 10, bottom: 10),

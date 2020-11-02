@@ -4,7 +4,7 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter_radio/flutter_radio.dart';
 import 'dart:async';
 
-const streamUrl = 'http://srv9.abcradio.com.br:7002/listen.mp3';
+const streamUrl = 'http://player.stmsrv.com:25584/listen.mp3';
 
 bool buttonState = true;
 
@@ -60,8 +60,8 @@ class CustomAudioPlayer extends BackgroundAudioTask {
   Completer _completer = Completer();
   MediaItem mediaItem = MediaItem(
       id: 'audio_1',
-      album: 'Igreja em Aracaju',
-      title: 'Jesus é Deus',
+      album: 'ABC Rádio',
+      title: 'A Rádio que não cansa você.',
       artUri: 'https://tecnocamp.info/assets/noimageavailable.jpg');
 
   Future<void> audioStart() async {

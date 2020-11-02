@@ -34,6 +34,7 @@ dependencies:
   flutter_mailer: ^0.5.0
   splashscreen: ^1.2.0
   connectivity: ^0.4.8+6
+  url_launcher: ^5.5.0
   mobx: ^1.2.1
   get_it: ^4.0.2
   flutter_mobx: ^1.1.0
@@ -58,6 +59,10 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+  fonts:
+   - family:  RedesSociais
+     fonts:
+      - asset: assets/fonts/RedesSociais.ttf
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
@@ -71,9 +76,9 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   # fonts:
-  #   - family: Schyler
+  #   - family: Whatsapp
   #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  #       - asset: assets/fonts/RedesSociais.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

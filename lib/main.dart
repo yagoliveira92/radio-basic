@@ -49,7 +49,7 @@ Widget _introScreen() {
     children: <Widget>[
       SplashScreen(
         seconds: 2,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey,
         navigateAfterSeconds: Home(),
         loaderColor: Colors.transparent,
       ),
@@ -61,7 +61,7 @@ Widget _introScreen() {
             Center(
               heightFactor: 2.1,
               child: Image.asset(
-                'assets/logo_igreja.png',
+                'assets/abc_logo.png',
                 height: 300,
               ),
             ),

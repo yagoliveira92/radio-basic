@@ -65,9 +65,9 @@ mixin _$CoverController on _CoverControllerBase, Store {
   @override
   String toString() {
     return '''
-coverAlbum: $coverAlbum,
-artistName: $artistName,
-musicName: $musicName
+coverAlbum: ${coverAlbum},
+artistName: ${artistName},
+musicName: ${musicName}
     ''';
   }
 }

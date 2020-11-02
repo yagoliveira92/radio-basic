@@ -1,47 +1,142 @@
 import 'package:flutter/material.dart';
+import 'package:radiobasic/assets/redes_sociais_icons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Contato extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
     return Container(
       width: double.infinity,
+      decoration: BoxDecoration(
+          color: Color(0xFF1B203C),
+          image: DecorationImage(
+              image: ExactAssetImage('assets/background.jpg'),
+              fit: BoxFit.cover)),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Center(
-              heightFactor: 1.2,
+          Image.asset(
+            'assets/abc_logo.png',
+            width: 150,
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 25, bottom: 10),
+            child: Image.asset(
+              'assets/mapa.png',
+              height: 230,
+            ),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.only(left: (screenSize.width / 5.5)),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Igreja em Aracaju',
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  Text('Todos os Direitos Reservados',
-                      style: TextStyle(fontSize: 18)),
-                  Text('Versão 1.0.0', style: TextStyle(fontSize: 18)),
-                  Padding(
-                    padding: EdgeInsets.only(top: 30, bottom: 30),
-                    child: CustomPaint(
-                      painter: Drawhorizontalline(),
+                    'ABC Rádio',
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white,
                     ),
                   ),
-                  Image.asset(
-                    'assets/abc_logo.png',
-                    width: 150,
+                  Text(
+                    'Rua Mirosmar Ferreira Dantas',
+                    style: TextStyle(fontSize: 12, color: Colors.white),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 50),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          'Desenvolvido por',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                        Padding(padding: EdgeInsets.only(top: 12), child: Image.asset('assets/logo_tecnocamp.png', height: 50,)),
-                      ],
-                    ),
-                  )
+                  Text(
+                    'Aracaju, Sergipe - SE, 49052-879',
+                    style: TextStyle(fontSize: 12, color: Colors.white),
+                  ),
                 ],
-              ))
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 20, bottom: 25),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    RedesSociais.instagram,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                  onPressed: () {
+                    launch(
+                      "https://instagram.com/abcaudio",
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(
+                    RedesSociais.facebook,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                  onPressed: () {
+                    launch(
+                      "https://facebook.com/abcaudio",
+                    );
+                  },
+                ),
+                IconButton(
+                  icon: Icon(
+                    RedesSociais.youtube,
+                    color: Colors.white,
+                    size: 35,
+                  ),
+                  onPressed: () {
+                    launch(
+                      "https://youtube.com/abcaudio",
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: (screenSize.height / 7)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Text(
+                      'Desenvolvido por',
+                      style: TextStyle(fontSize: 12, color: Colors.white),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 12),
+                      child: Image.asset(
+                        'assets/logo_tecnocamp.png',
+                        height: 20,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 100),
+                Column(
+                  children: <Widget>[
+                    Text(
+                      'Stream by',
+                      style: TextStyle(fontSize: 12, color: Colors.white),
+                    ),
+                    Padding(
+                        padding: EdgeInsets.only(top: 12),
+                        child: Image.asset(
+                          'assets/abc_branco.png',
+                          height: 30,
+                        )),
+                  ],
+                ),
+                SizedBox(width: 50),
+              ],
+            ),
+          ),
         ],
       ),
     );

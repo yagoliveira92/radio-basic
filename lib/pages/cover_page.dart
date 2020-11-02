@@ -30,7 +30,7 @@ class _FirstPageState extends State<FirstPage> {
         decoration: BoxDecoration(
             color: Color(0xFF1B203C),
             image: DecorationImage(
-                image: ExactAssetImage('assets/background_igreja.png'),
+                image: ExactAssetImage('assets/background.jpg'),
                 fit: BoxFit.cover)),
         child: Padding(
           padding: EdgeInsets.only(bottom: 80),
@@ -41,7 +41,7 @@ class _FirstPageState extends State<FirstPage> {
               Padding(
                 padding: EdgeInsets.only(bottom: 15),
                 child: Image.asset(
-                  'assets/logo_igreja.png',
+                  'assets/abc_logo.png',
                   height: 120,
                   scale: 2,
                 ),
@@ -64,7 +64,7 @@ class _FirstPageState extends State<FirstPage> {
                           child: Text(
                             controller.musicName,
                             style: TextStyle(
-                                color: Colors.black,
+                                color: Colors.white,
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
@@ -74,7 +74,7 @@ class _FirstPageState extends State<FirstPage> {
                         Padding(
                           child: Text(
                             controller.artistName,
-                            style: TextStyle(color: Colors.black, fontSize: 18),
+                            style: TextStyle(color: Colors.white, fontSize: 18),
                             textAlign: TextAlign.center,
                           ),
                           padding: EdgeInsets.only(top: 10),
