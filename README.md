@@ -1,6 +1,6 @@
-# radiobasic
+# radio_basic
 
-Radio Application OpenSource
+Aplicativo de Rádio Simples utilizando MobX e com integração com o Parse Server
 
 ## Getting Started
 
