@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:radio_basic/app/core/fonts/redes_sociais_icons.dart';
+import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BottomAppbarWidget extends StatelessWidget {
-  const BottomAppbarWidget({Key key}) : super(key: key);
+  const BottomAppbarWidget({this.changePage, Key key}) : super(key: key);
+
+  final VoidCallback changePage;
 
   @override
   Widget build(BuildContext context) {
@@ -20,11 +24,7 @@ class BottomAppbarWidget extends StatelessWidget {
                           color: Color(0xFF1B203C),
                           size: 35,
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _myPage.jumpToPage(0);
-                          });
-                        },
+                        onPressed: () => changePage(1),
                       ),
                       Text(
                         "Rádio",
@@ -60,11 +60,7 @@ class BottomAppbarWidget extends StatelessWidget {
                           color: Color(0xFF1B203C),
                           size: 35,
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _myPage.jumpToPage(1);
-                          });
-                        },
+                        onPressed: () => changePage(2),
                       ),
                       Text(
                         "Redes",
@@ -94,6 +90,6 @@ https://play.google.com/store/apps/details?id=br.abcradio.web''');
                   )
                 ],
               ),
-            ),
+            );
   }
 }

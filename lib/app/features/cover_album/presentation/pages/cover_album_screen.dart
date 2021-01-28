@@ -39,7 +39,7 @@ class CoverAlbumScreen extends StatelessWidget {
                   if (state is CoverAlbumInitial || state is CoverAlbumNotFound) {
                     return CoverAlbumNotFoundWidget();
                   }
-                    return CoverAlbumWidget(musicMetadata: ,);
+                    return CoverAlbumWidget(musicMetadata: state.musicMetadata,);
                 },
               ),
             ),
